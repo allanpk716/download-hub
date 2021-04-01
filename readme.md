@@ -61,6 +61,10 @@
 
 [onlineVideoDl 设计](https://github.com/allanpk716/download-hub/blob/master/DesignFiles/02.taskCenter%20%E8%AE%BE%E8%AE%A1/readme.md)
 
+### 03.proxyHub 设计
+
+[proxyHub 设计](https://github.com/allanpk716/download-hub/blob/master/DesignFiles/03.proxyHub%20%E8%AE%BE%E8%AE%A1/readme.md)
+
 ## 使用到的框架和库
 
 * [go-zero](https://github.com/tal-tech/go-zero)
