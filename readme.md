@@ -2,6 +2,8 @@
 
 开局全靠一张图，之前做的推倒重来 :stuck_out_tongue:
 
+完整的设计过程和代码都会在这更新，只打算写中文文档。文档会根据开发遇到的情况调整。
+
 ## 基于 RSS 订阅的下载
 
 ![all](DesignFiles/pics/rss_all.png)
