@@ -18,8 +18,8 @@
 
 ### 01.onlineVideoDl 设计
 
-[onlineVideoDl 设计](DesignFiles/01.onlineVideoDl 设计/readme.md)
+[onlineVideoDl 设计](https://github.com/allanpk716/download-hub/blob/master/DesignFiles/01.onlineVideoDl%20%E8%AE%BE%E8%AE%A1/readme.md)
 
 ### 02.taskCenter 设计
 
-[onlineVideoDl 设计](DesignFiles/02.taskCenter 设计/readme.md)
+[onlineVideoDl 设计](https://github.com/allanpk716/download-hub/blob/master/DesignFiles/02.taskCenter%20%E8%AE%BE%E8%AE%A1/readme.md)
