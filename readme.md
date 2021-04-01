@@ -13,3 +13,13 @@
 ![all](DesignFiles/pics/comic_all.png)
 
 这里会实现几个网站的爬虫，或者找对应网站的爬虫，不限于 go 或者是 python 的，优先后者。
+
+## 分模块设计
+
+### 01.onlineVideoDl 设计
+
+[[onlineVideoDl 设计]](DesignFiles/01.onlineVideoDl 设计/onlineVideoDl 设计.md)
+
+### 02.taskCenter 设计
+
+[[onlineVideoDl 设计]](DesignFiles/02.taskCenter 设计/taskCenter 设计.md)
