@@ -1,6 +1,6 @@
 # Downloadhub
 
-开局全靠一张图，之前做的推倒重来 doge
+开局全靠一张图，之前做的推倒重来 :stuck_out_tongue:
 
 ## 基于 RSS 订阅的下载
 
