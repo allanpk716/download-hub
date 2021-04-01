@@ -9,13 +9,15 @@ message TasksInProgressRequest {
 }
 
 message TasksInProgressResponse {
-  repeated OneTask OneTask = 1;
+  repeated OnlineVideoTask OnlineVideoTasks = 1;
 }
 
-message OneTask {
+message OnlineVideoTask {
   google.protobuf.Timestamp StartTime = 1;  // 任务开始的时间
-  int32  TaskID = 2;                        // 任务的 ID
-  string TaskName = 3;                      // 任务的名称（一般是下载的文件的名称）
+  int32  ID = 2;                            // 任务的 ID
+  string Name = 3;                          // 任务的名称（一般是下载的文件的名称）
+  string URL = 4;                           // 视频的下载连接地址
+  string SavePath = 5;                      // 保存的路径
 }
 
 service OnlineVideoDl {
