@@ -19,5 +19,5 @@ message OneTask {
 }
 
 service OnlineVideoDl {
-  rpc getPressingTasks(TasksInProgressRequest) returns (TasksInProgressResponse);
+  rpc getProcessingTasks(TasksInProgressRequest) returns (TasksInProgressResponse);
 }
