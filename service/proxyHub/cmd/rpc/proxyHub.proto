@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proxyHub;
+
+message ProxyHubRequest {
+  string name = 1;
+}
+
+message ProxyHubResponse {
+  string greet = 1;
+}
+
+service GetFitProxyURL {
+  rpc greet(ProxyHubRequest) returns (ProxyHubResponse);
+}
