@@ -15,6 +15,16 @@ func TestLoadPage(t *testing.T) {
 	}
 }
 
+func TestLoadPageFromRemoteDocker(t *testing.T) {
+	desURL := "https://www.wikipedia.org/"
+	httpProxyURL := "http://127.0.0.1:10809"
+	remoteDockerURL := "ws://192.168.50.135:9222"
+	_, err := LoadPageFromRemoteDocker(desURL, httpProxyURL, remoteDockerURL, 10*time.Second, 5)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestLoadPageByHijackRequests(t *testing.T) {
 	desURL := "https://www.wikipedia.org/"
 	httpProxyURL := "http://127.0.0.1:10809"
@@ -48,4 +58,19 @@ func TestNewBrowser(t *testing.T) {
 	//if err != nil {
 	//	t.Fatal(err)
 	//}
+}
+
+func TestNewBrowserFromDocker(t *testing.T) {
+	desURL := "https://www.wikipedia.org/"
+	httpProxyURL := "http://127.0.0.1:10809"
+	remoteDockerURL := "ws://192.168.50.135:9222"
+
+	browser, err := NewBrowserFromDocker(httpProxyURL, remoteDockerURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = browser.Page(proto.TargetCreateTarget{URL: desURL})
+	if err != nil {
+		t.Fatal(err)
+	}
 }

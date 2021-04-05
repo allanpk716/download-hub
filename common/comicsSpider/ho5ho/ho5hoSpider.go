@@ -3,18 +3,19 @@ package ho5hoSpider
 import (
 	"errors"
 	"github.com/allanpk716/Downloadhub/common"
+	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/utils"
 	"log"
 	"time"
 )
 
-type ho5hoSpider struct {
+type Ho5hoSpider struct {
 	timeOut time.Duration
 	maxRetryTimes int
 }
 
-func Newho5hoSpider(timeOut time.Duration, maxRetryTimes int) *ho5hoSpider {
-	ho := ho5hoSpider{
+func NewHo5hoSpider(timeOut time.Duration, maxRetryTimes int) *Ho5hoSpider {
+	ho := Ho5hoSpider{
 		timeOut: timeOut,
 		maxRetryTimes: maxRetryTimes,
 	}
@@ -22,13 +23,20 @@ func Newho5hoSpider(timeOut time.Duration, maxRetryTimes int) *ho5hoSpider {
 }
 
 // 一个动漫的所有集的地址
-func (h ho5hoSpider) GetAllEpisode() {
+func (h Ho5hoSpider) GetAllEpisode() {
 
 }
 
 // 一集里面所有的页地址
-func (h ho5hoSpider) GetOneEpisodePicURLs(desURL, httpProxyURL string) error {
-	page, err := common.LoadPage(desURL, httpProxyURL, h.timeOut, h.maxRetryTimes)
+func (h Ho5hoSpider) GetOneEpisodePicURLs(urlExInfo common.UrlExInfo) error {
+	var err error
+	var page *rod.Page
+	if urlExInfo.RemoteDockerURL == "" {
+		page, err = common.LoadPage(urlExInfo.URL, urlExInfo.HttpProxyURL, h.timeOut, h.maxRetryTimes)
+
+	} else {
+		page, err = common.LoadPageFromRemoteDocker(urlExInfo.URL, urlExInfo.HttpProxyURL, urlExInfo.RemoteDockerURL, h.timeOut, h.maxRetryTimes)
+	}
 	if err != nil {
 		return err
 	}
@@ -52,9 +60,16 @@ func (h ho5hoSpider) GetOneEpisodePicURLs(desURL, httpProxyURL string) error {
 }
 
 // 下载一页
-func (h ho5hoSpider) GetOnePic(desURL, httpProxyURL string) error {
+func (h Ho5hoSpider) GetOnePic(urlExInfo common.UrlExInfo) error {
 
-	page, err := common.LoadPage(desURL, httpProxyURL, h.timeOut, h.maxRetryTimes)
+	var err error
+	var page *rod.Page
+	if urlExInfo.RemoteDockerURL == "" {
+		page, err = common.LoadPage(urlExInfo.URL, urlExInfo.HttpProxyURL, h.timeOut, h.maxRetryTimes)
+
+	} else {
+		page, err = common.LoadPageFromRemoteDocker(urlExInfo.URL, urlExInfo.HttpProxyURL, urlExInfo.RemoteDockerURL, h.timeOut, h.maxRetryTimes)
+	}
 	if err != nil {
 		return err
 	}

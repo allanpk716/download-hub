@@ -12,6 +12,12 @@ import (
 	"time"
 )
 
+type UrlExInfo struct {
+	URL string
+	HttpProxyURL string
+	RemoteDockerURL string
+}
+
 /**
  * @Description: 			新建一个支持代理的 browser 对象
  * @param httpProxyURL		http://127.0.0.1:10809
@@ -34,8 +40,80 @@ func NewBrowser(httpProxyURL string) (*rod.Browser, error) {
 	return browser, nil
 }
 
+/**
+ * @Description: 			访问目标 URL，返回 page，只是这个 page 有效，如果再次出发其他的事件无效
+ * @param desURL			目标 URL
+ * @param httpProxyURL		http://127.0.0.1:10809
+ * @param timeOut			超时时间
+ * @param maxRetryTimes		当是非超时 err 的时候，最多可以重试几次
+ * @return *rod.Page
+ * @return error
+ */
+func NewBrowserFromDocker(httpProxyURL, remoteDockerURL string) (*rod.Browser, error) {
+	var browser *rod.Browser
+
+	err := rod.Try(func() {
+		l := launcher.MustNewRemote(remoteDockerURL)
+		u := l.Proxy(httpProxyURL).MustLaunch()
+		l.Headless(false).XVFB()
+		browser = rod.New().Client(l.Client()).ControlURL(u).MustConnect()
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return browser, nil
+}
+
+/**
+ * @Description: 			访问目标 URL，返回 page，只是这个 page 有效，如果再次出发其他的事件无效
+ * @param desURL			目标 URL
+ * @param httpProxyURL		http://127.0.0.1:10809
+ * @param timeOut			超时时间
+ * @param maxRetryTimes		当是非超时 err 的时候，最多可以重试几次
+ * @return *rod.Page
+ * @return error
+ */
 func LoadPage(desURL string, httpProxyURL string, timeOut time.Duration, maxRetryTimes int) (*rod.Page, error) {
 	browser, err := NewBrowser(httpProxyURL)
+	if err != nil {
+		return nil, err
+	}
+	page, err := browser.Page(proto.TargetCreateTarget{URL: ""})
+	if err != nil {
+		return nil, err
+	}
+	page = page.Timeout(timeOut)
+	nowRetryTimes := 0
+	for nowRetryTimes <= maxRetryTimes {
+		err = rod.Try(func() {
+			wait := page.MustWaitNavigation()
+			page.MustNavigate(desURL)
+			wait()
+		})
+		if errors.Is(err, context.DeadlineExceeded) {
+			// 超时
+			return nil, err
+		} else if err == nil {
+			// 没有问题
+			break
+		}
+	}
+
+	return page, nil
+}
+
+/**
+ * @Description: 			访问目标 URL，返回 page，只是这个 page 有效，如果再次出发其他的事件无效
+ * @param desURL			目标 URL
+ * @param httpProxyURL		http://127.0.0.1:10809
+ * @param timeOut			超时时间
+ * @param maxRetryTimes		当是非超时 err 的时候，最多可以重试几次
+ * @return *rod.Page
+ * @return error
+ */
+func LoadPageFromRemoteDocker(desURL string, httpProxyURL, remoteDockerURL string, timeOut time.Duration, maxRetryTimes int) (*rod.Page, error) {
+	browser, err := NewBrowserFromDocker(httpProxyURL, remoteDockerURL)
 	if err != nil {
 		return nil, err
 	}
