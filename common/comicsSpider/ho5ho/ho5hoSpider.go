@@ -269,7 +269,7 @@ func (h *Ho5hoSpider) GetAllEpisode(rootURL string) (*comicsSpider.ComicInfo, er
 		if err != nil {
 			return nil, err
 		}
-		tmpStr := strings.Split(epsNameAndServer, "-")
+		tmpStr := strings.SplitN(epsNameAndServer, "-", 2)
 		if len(tmpStr) != 2 {
 			return nil, ErrEpsNameAndServerSplitLenNot2
 		}

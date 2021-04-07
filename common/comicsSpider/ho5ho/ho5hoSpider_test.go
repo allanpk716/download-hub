@@ -37,10 +37,11 @@ func TestAll(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Println("All found:", len(allComics))
-	for _, comic := range allComics {
-		println("Start", comic.Name)
+	for index, comic := range allComics {
+		println("Start", comic.Name, index+1, "/", len(allComics))
 		nowComicInfo, err :=  ho.GetAllEpisode(comic.Url)
 		if err != nil {
+			println("Start", comic.Url)
 			t.Fatal(err)
 		}
 		needPass := false
