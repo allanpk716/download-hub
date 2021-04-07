@@ -2,6 +2,7 @@ package ho5hoSpider
 
 import (
 	"errors"
+	"fmt"
 	"github.com/allanpk716/Downloadhub/common"
 	"github.com/allanpk716/Downloadhub/common/comicsSpider"
 	"github.com/go-rod/rod"
@@ -22,7 +23,6 @@ type Ho5hoSpider struct {
 	HttpProxyURL    string
 	RemoteDockerURL string
 	browser			*rod.Browser
-	page		 	*rod.Page
 }
 
 func NewHo5hoSpider(saveRootPath string,
@@ -45,11 +45,116 @@ func NewHo5hoSpider(saveRootPath string,
 	if err != nil {
 		return nil, err
 	}
-	ho.page, err = common.NewPage(ho.browser)
+	return &ho, nil
+}
+
+func (h *Ho5hoSpider) GetAllComicMatchWhatYouWanted() ([]comicsSpider.ComicInfo, error) {
+	var err error
+	var page *rod.Page
+	var comics []comicsSpider.ComicInfo
+	page, err = common.NewPage(h.browser)
 	if err != nil {
 		return nil, err
 	}
-	return &ho, nil
+	page, err = common.PageNavigate(page, ComicSiteMainUrl, h.timeOut, h.maxRetryTimes)
+	if err != nil {
+		return nil, err
+	}
+	// 进入主要的一级
+	allInfoEl, err := page.Element(comicMainALlString)
+	if err != nil {
+		return nil, err
+	}
+	// 一共多少页
+	comicMainAllPages, err := allInfoEl.Element(comicMainAllPagesString)
+	if err != nil {
+		return nil, err
+	}
+	tmpComicPage, err := comicMainAllPages.Text()
+	if err != nil {
+		return nil, err
+	}
+	result := regNumber.FindAllString(tmpComicPage, -1)
+	if len(result) != 2 {
+		return nil, ErrAnalysePagesLenNot2
+	}
+	nowPage, err := strconv.Atoi(result[0])
+	if err != nil {
+		return nil, err
+	}
+	println("NowIndex:", nowPage)
+	nowMaxPage, err := strconv.Atoi(result[1])
+	if err != nil {
+		return nil, err
+	}
+	// 先分析第一页
+	oneComicInfo, err := h.getComicList(page)
+	if err != nil {
+		return nil, err
+	}
+	comics = append(comics, oneComicInfo...)
+	err = page.Close()
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("nowPage comics:", len(oneComicInfo))
+	// 开始遍历
+	for i := 2; i <= nowMaxPage; i++ {
+		println("NowIndex:", i)
+		nowIndexString := strconv.Itoa(i)
+		nextUrl := ComicSiteSubPage0 + nowIndexString+ ComicSiteSubPage1
+		pageTmp, err := common.NewPageNavigate(h.browser, nextUrl, h.timeOut, h.maxRetryTimes)
+		if err != nil {
+			return nil, err
+		}
+		oneComicInfo, err := h.getComicList(pageTmp)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println("nowPage comics:", len(oneComicInfo))
+		comics = append(comics, oneComicInfo...)
+		err = pageTmp.Close()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return comics, nil
+}
+
+func (h Ho5hoSpider) getComicList(page *rod.Page) ([]comicsSpider.ComicInfo, error) {
+	var comics []comicsSpider.ComicInfo
+	// 进入主要的一级
+	_, err := page.Element(comicMainALlString)
+	if err != nil {
+		return nil, err
+	}
+	// 这一页所有的漫画
+	allInfoEl, err := page.Elements("div.page-item-detail.manga")
+	if err != nil {
+		return nil, err
+	}
+
+	for _, subElement := range allInfoEl {
+		oneAlink, err := subElement.Element("div > a")
+		if err != nil {
+			return nil, err
+		}
+		oneComicUrl, err := oneAlink.Attribute("href")
+		if err != nil {
+			return nil, err
+		}
+		oneComicTitle, err := oneAlink.Attribute("title")
+		if err != nil {
+			return nil, err
+		}
+		comics = append(comics, comicsSpider.ComicInfo{
+			Name: *oneComicTitle,
+			Url: *oneComicUrl,
+		})
+	}
+
+
+	return comics, nil
 }
 
 // 一个动漫的所有集的地址
@@ -58,7 +163,13 @@ func (h *Ho5hoSpider) GetAllEpisode(rootURL string) (*comicsSpider.ComicInfo, er
 	comicInfo.Eps = []comicsSpider.EpisodeInfo{}
 	var err error
 	var page *rod.Page
-	page, err = common.PageNavigate(h.page, rootURL, h.timeOut, h.maxRetryTimes)
+	// 每一次重新开一个
+	page, err = common.NewPage(h.browser)
+	if err != nil {
+		return nil, err
+	}
+	defer page.Close()
+	page, err = common.PageNavigate(page, rootURL, h.timeOut, h.maxRetryTimes)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +313,13 @@ type EpsServers struct {
 func (h *Ho5hoSpider) GetOneEpisodePicURLs(episodeInfo *comicsSpider.EpisodeInfo) error {
 	var err error
 	var page *rod.Page
-	page, err = common.PageNavigate(h.page, episodeInfo.Url, h.timeOut, h.maxRetryTimes)
+	// 每一次重新开一个
+	page, err = common.NewPage(h.browser)
+	if err != nil {
+		return err
+	}
+	defer page.Close()
+	page, err = common.PageNavigate(page, episodeInfo.Url, h.timeOut, h.maxRetryTimes)
 	if err != nil {
 		return err
 	}
@@ -267,7 +384,13 @@ func (h *Ho5hoSpider) GetOnePic(pageInfo comicsSpider.PageInfo, ExistThenPass bo
 	}
 
 	var page *rod.Page
-	page, err = common.PageNavigate(h.page, pageInfo.URL, h.timeOut, h.maxRetryTimes)
+	// 每一次重新开一个
+	page, err = common.NewPage(h.browser)
+	if err != nil {
+		return err
+	}
+	defer page.Close()
+	page, err = common.PageNavigate(page, pageInfo.URL, h.timeOut, h.maxRetryTimes)
 	if err != nil {
 		return err
 	}
@@ -295,6 +418,7 @@ func (h *Ho5hoSpider) Close() error {
 }
 
 var (
+	ErrAnalysePagesLenNot2 = errors.New("analyse pages len not 2")
 	ErrDownloadPicIsTooSmall = errors.New("download pic is too small")
 	ErrAnalyseScoreLenNot3 = errors.New("analyse score len not 3")
 	ErrComicStatusReadError = errors.New("comic status read error")
@@ -306,6 +430,11 @@ const StatusStringCompleted = "Completed"
 const StatusStringOnGoing = "OnGoing"
 
 const (
+	ComicSiteMainUrl = "https://www.ho5ho.com/?m_orderby=views"
+	ComicSiteSubPage0 = "https://www.ho5ho.com/page/"
+	ComicSiteSubPage1 = "/?m_orderby=views"
+	comicMainALlString = "body > div.wrap > div > div > div.c-page-content.style-1 > div > div > div > div.main-col.col-md-8.col-sm-8 > div.main-col-inner > div > div.c-page__content > div.tab-content-wrap > div"
+	comicMainAllPagesString = "div.col-12.col-md-12 > div > span.pages"
 	comicNameElString   = "body > div.wrap > div > div > div > div.profile-manga.lazy > div > div > div > div.post-title > h1"
 	scoreThingsElString = "body > div.wrap > div > div > div > div.profile-manga.lazy > div > div > div > div.tab-summary > div.summary_content_wrap > div > div.post-content > div:nth-child(3) > div.summary-content.vote-details"
 	statusElString = "body > div.wrap > div > div > div > div.profile-manga.lazy > div > div > div > div.tab-summary > div.summary_content_wrap > div > div.post-status > div:nth-child(2) > div.summary-content"

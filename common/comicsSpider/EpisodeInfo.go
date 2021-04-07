@@ -2,6 +2,7 @@ package comicsSpider
 
 type ComicInfo struct {
 	Name		string
+	Url			string
 	Score		float32
 	MaxScore	float32
 	TotalVotes	int

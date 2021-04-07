@@ -1,6 +1,7 @@
 package ho5hoSpider
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -9,10 +10,20 @@ import (
 
 func TestAll(t *testing.T) {
 	httpProxyURL := "http://127.0.0.1:10809"
-	comicUrl := "https://www.ho5ho.com/%E4%B8%AD%E5%AD%97h%E6%BC%AB/%e7%84%a1%e7%a2%bc%e6%88%90%e4%ba%ba%e6%bc%ab%e7%95%ab-%e8%83%b8%e7%bd%a9%e8%a2%ab%e4%ba%ba%e5%81%b7%e4%ba%86%e5%8f%aa%e5%a5%bd%e7%9c%9f%e7%a9%ba%e5%8e%bb%e9%9d%a2%e8%a9%a6/"
 	//remoteDockerURL := "ws://192.168.50.135:9222"
 	saveRootPath := "X:\\ho5ho\\"
-
+	// 排除不想看的关键词
+	noText := make(map[string]int)
+	noText["媽媽"]=0
+	noText["崩壞"]=0
+	noText["幼齒"]=0
+	noText["母親"]=0
+	noText["母豬"]=0
+	noText["阿黑顏"]=0
+	noText["黑肉"]=0
+	noText["亂倫"]=0
+	noText["母子"]=0
+	// 实例化
 	ho, err := NewHo5hoSpider(saveRootPath,
 		httpProxyURL,
 		"",
@@ -20,21 +31,44 @@ func TestAll(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	nowComicInfo, err :=  ho.GetAllEpisode(comicUrl)
+
+	allComics, err := ho.GetAllComicMatchWhatYouWanted()
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, ep := range nowComicInfo.Eps {
-		err = ho.GetOneEpisodePicURLs(&ep)
+	fmt.Println("All found:", len(allComics))
+	for _, comic := range allComics {
+		println("Start", comic.Name)
+		nowComicInfo, err :=  ho.GetAllEpisode(comic.Url)
 		if err != nil {
 			t.Fatal(err)
 		}
-		for _, page := range ep.Pages {
-			err = ho.GetOnePic(page, true)
+		needPass := false
+		fmt.Println("Classifies", nowComicInfo.Classifies)
+		for _, classify := range nowComicInfo.Classifies {
+			_, ok :=noText[classify]
+			if ok == true {
+				needPass = true
+				break
+			}
+		}
+		if needPass == true {
+			println("Pass", comic.Name)
+			continue
+		}
+		for epIndex, ep := range nowComicInfo.Eps {
+			println("Ep:", ep.EpName, epIndex+1, "/", len(nowComicInfo.Eps))
+			err = ho.GetOneEpisodePicURLs(&ep)
 			if err != nil {
 				t.Fatal(err)
 			}
+			for _, page := range ep.Pages {
+				println("Page:", page.Index, "/", ep.MaxPages)
+				err = ho.GetOnePic(page, true)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 		}
 	}
-
 }
