@@ -110,8 +110,8 @@ func (m *TasksInProgressResponse) GetOnlineVideoTasks() []*OnlineVideoTask {
 type OnlineVideoTask struct {
 	StartTime            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=StartTime,proto3" json:"StartTime,omitempty"`
 	ID                   int32                `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`
-	Name                 string               `protobuf:"bytes,3,opt,name=Name,proto3" json:"Name,omitempty"`
-	URL                  string               `protobuf:"bytes,4,opt,name=URL,proto3" json:"URL,omitempty"`
+	Name                 string               `protobuf:"bytes,3,opt,name=ComicName,proto3" json:"ComicName,omitempty"`
+	URL                  string               `protobuf:"bytes,4,opt,name=Url,proto3" json:"Url,omitempty"`
 	SavePath             string               `protobuf:"bytes,5,opt,name=SavePath,proto3" json:"SavePath,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`

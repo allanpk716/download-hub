@@ -9,7 +9,7 @@ import (
 func TestLoadPage(t *testing.T) {
 	desURL := "https://www.wikipedia.org/"
 	httpProxyURL := "http://127.0.0.1:10809"
-	_, err := LoadPage(desURL, httpProxyURL, 10*time.Second, 5)
+	_, err := NewBrowserLoadPage(desURL, httpProxyURL, 10*time.Second, 5)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +19,7 @@ func TestLoadPageFromRemoteDocker(t *testing.T) {
 	desURL := "https://www.wikipedia.org/"
 	httpProxyURL := "http://127.0.0.1:10809"
 	remoteDockerURL := "ws://192.168.50.135:9222"
-	_, err := LoadPageFromRemoteDocker(desURL, httpProxyURL, remoteDockerURL, 10*time.Second, 5)
+	_, err := NewBrowserLoadPageFromRemoteDocker(desURL, httpProxyURL, remoteDockerURL, 10*time.Second, 5)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestLoadPageFromRemoteDocker(t *testing.T) {
 func TestLoadPageByHijackRequests(t *testing.T) {
 	desURL := "https://www.wikipedia.org/"
 	httpProxyURL := "http://127.0.0.1:10809"
-	_, err := LoadPageByHijackRequests(desURL, httpProxyURL, 10*time.Second, 5)
+	_, err := NewBrowserLoadPageByHijackRequests(desURL, httpProxyURL, 10*time.Second, 5)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -11,7 +11,7 @@ func NormalRSS(httpProxy string) *RSSHelper {
 	nRSS := RSSHelper{}
 	// Create a Resty Client
 	nRSS.client = resty.New()
-	// Setting a Proxy URL and Port
+	// Setting a Proxy Url and Port
 	nRSS.client.SetProxy(httpProxy)
 
 	return &nRSS
