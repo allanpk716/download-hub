@@ -1,4 +1,4 @@
-package InstagramRSS
+package instagram_rss
 
 import (
 	"fmt"

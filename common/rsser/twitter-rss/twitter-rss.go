@@ -1,4 +1,4 @@
-package TwitterRSS
+package twitter_rss
 
 import (
 	"context"

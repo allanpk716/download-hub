@@ -1,4 +1,4 @@
-package NormalRSS
+package normal_rss
 
 import "github.com/go-resty/resty/v2"
 

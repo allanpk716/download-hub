@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/allanpk716/Downloadhub/common"
-	"github.com/allanpk716/Downloadhub/common/comicsSpider"
+	"github.com/allanpk716/Downloadhub/common/comics-spider"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/utils"
 	"os"
@@ -48,10 +48,10 @@ func NewHo5hoSpider(saveRootPath string,
 	return &ho, nil
 }
 
-func (h *Ho5hoSpider) GetAllComicMatchWhatYouWanted() ([]comicsSpider.ComicInfo, error) {
+func (h *Ho5hoSpider) GetAllComicMatchWhatYouWanted() ([]comics_spider.ComicInfo, error) {
 	var err error
 	var page *rod.Page
-	var comics []comicsSpider.ComicInfo
+	var comics []comics_spider.ComicInfo
 	page, err = common.NewPage(h.browser)
 	if err != nil {
 		return nil, err
@@ -121,8 +121,8 @@ func (h *Ho5hoSpider) GetAllComicMatchWhatYouWanted() ([]comicsSpider.ComicInfo,
 	return comics, nil
 }
 
-func (h Ho5hoSpider) getComicList(page *rod.Page) ([]comicsSpider.ComicInfo, error) {
-	var comics []comicsSpider.ComicInfo
+func (h Ho5hoSpider) getComicList(page *rod.Page) ([]comics_spider.ComicInfo, error) {
+	var comics []comics_spider.ComicInfo
 	// 进入主要的一级
 	_, err := page.Element(comicMainALlString)
 	if err != nil {
@@ -147,7 +147,7 @@ func (h Ho5hoSpider) getComicList(page *rod.Page) ([]comicsSpider.ComicInfo, err
 		if err != nil {
 			return nil, err
 		}
-		comics = append(comics, comicsSpider.ComicInfo{
+		comics = append(comics, comics_spider.ComicInfo{
 			Name: *oneComicTitle,
 			Url: *oneComicUrl,
 		})
@@ -158,9 +158,9 @@ func (h Ho5hoSpider) getComicList(page *rod.Page) ([]comicsSpider.ComicInfo, err
 }
 
 // 一个动漫的所有集的地址
-func (h *Ho5hoSpider) GetAllEpisode(rootURL string) (*comicsSpider.ComicInfo, error) {
-	comicInfo := comicsSpider.ComicInfo{}
-	comicInfo.Eps = []comicsSpider.EpisodeInfo{}
+func (h *Ho5hoSpider) GetAllEpisode(rootURL string) (*comics_spider.ComicInfo, error) {
+	comicInfo := comics_spider.ComicInfo{}
+	comicInfo.Eps = []comics_spider.EpisodeInfo{}
 	var err error
 	var page *rod.Page
 	// 每一次重新开一个
@@ -288,13 +288,13 @@ func (h *Ho5hoSpider) GetAllEpisode(rootURL string) (*comicsSpider.ComicInfo, er
 	// 那么就需要现在进去下载一集的一话
 	for k, v := range epsMap {
 		for _, url := range v.Urls {
-			err = h.GetOneEpisodePicURLs(&comicsSpider.EpisodeInfo{
+			err = h.GetOneEpisodePicURLs(&comics_spider.EpisodeInfo{
 				Url: url,
 			})
 			if err !=  nil {
 				continue
 			} else {
-				comicInfo.Eps = append(comicInfo.Eps, comicsSpider.EpisodeInfo{
+				comicInfo.Eps = append(comicInfo.Eps, comics_spider.EpisodeInfo{
 					EpName: k,
 					Url: url,
 				})
@@ -310,7 +310,7 @@ type EpsServers struct {
 }
 
 // 一集里面所有的页地址
-func (h *Ho5hoSpider) GetOneEpisodePicURLs(episodeInfo *comicsSpider.EpisodeInfo) error {
+func (h *Ho5hoSpider) GetOneEpisodePicURLs(episodeInfo *comics_spider.EpisodeInfo) error {
 	var err error
 	var page *rod.Page
 	// 每一次重新开一个
@@ -332,7 +332,7 @@ func (h *Ho5hoSpider) GetOneEpisodePicURLs(episodeInfo *comicsSpider.EpisodeInfo
 		return err
 	}
 	episodeInfo.MaxPages = len(opts)
-	episodeInfo.Pages = []comicsSpider.PageInfo{}
+	episodeInfo.Pages = []comics_spider.PageInfo{}
 	for index, opt := range opts {
 		//picIndex, err := opt.Text()
 		//if err != nil {
@@ -342,7 +342,7 @@ func (h *Ho5hoSpider) GetOneEpisodePicURLs(episodeInfo *comicsSpider.EpisodeInfo
 		if err != nil {
 			return err
 		}
-		onePage := comicsSpider.PageInfo{
+		onePage := comics_spider.PageInfo{
 			EpName: episodeInfo.EpName,
 			Index: index + 1,
 			URL: *nowUrl,
@@ -366,7 +366,7 @@ func (h *Ho5hoSpider) GetOneEpisodePicURLs(episodeInfo *comicsSpider.EpisodeInfo
 }
 
 // 下载一页
-func (h *Ho5hoSpider) GetOnePic(pageInfo comicsSpider.PageInfo, ExistThenPass bool) error {
+func (h *Ho5hoSpider) GetOnePic(pageInfo comics_spider.PageInfo, ExistThenPass bool) error {
 
 	var err error
 	// 下载的目标目录是否存在
