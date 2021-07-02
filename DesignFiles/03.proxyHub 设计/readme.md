@@ -1,4 +1,6 @@
-# 03.proxyHub 设计
+# 03.proxy-hub 设计
+
+
 
 ## 自己的 http proxy
 
@@ -16,7 +18,7 @@
 
 当然，本地还有自己的 http 代理的，所以一种有三个源。
 
-![all](pics/all.png)
+![proxy-hub 设计](pics/proxy-hub 设计.png)
 
 ## 数据结构
 
@@ -26,8 +28,32 @@
 * scylla
 * self
 
-单个代理的信息，ProxyInfo
 
-* URL
-* HTTP/HTTPS
-* 
+
+单个代理的信息，ProxyInfo：
+
+* SourseID，代理的源
+* URL，代理的地址
+* HTTP  / HTTPS
+* AliveStatus，有效状态
+  * 对应网站（域名）的访问统计，成功次数/总次数
+  * 对应网站（域名）的访问统计，成功次数/总次数
+  * ...
+
+
+
+每个网站对应的能够访问的代理地址列表：
+
+* 对应网站（域名）
+  * ProxyInfo
+  * ProxyInfo
+  * ...
+* 对应网站（域名）
+  * ProxyInfo
+  * ProxyInfo
+  * ...
+
+
+
+接口：
+
