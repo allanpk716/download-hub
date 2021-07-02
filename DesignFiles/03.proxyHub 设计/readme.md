@@ -1,5 +1,11 @@
 # 03.proxyHub 设计
 
+## 自己的 http proxy
+
+现在是使用额外的 V2Ray 共享 http 代理出来使用的，后续可能考虑写个接口，允许选择（切换）最佳的下载服务器。
+
+## 第三方的代理池
+
 这里肯定不是自己去做一个代理的爬虫什么的，而是用现成的。那么现在看了两个项目：
 
 * ### [jhao104 / proxy_pool](https://github.com/jhao104/proxy_pool)
@@ -12,6 +18,16 @@
 
 ![all](pics/all.png)
 
-## 自己的 http proxy
+## 数据结构
 
-现在是使用额外的 V2Ray 共享 http 代理出来使用的，后续可能考虑写个接口，允许选择（切换）最佳的下载服务器。
+代理的源：
+
+* proxy_pool
+* scylla
+* self
+
+单个代理的信息，ProxyInfo
+
+* URL
+* HTTP/HTTPS
+* 
