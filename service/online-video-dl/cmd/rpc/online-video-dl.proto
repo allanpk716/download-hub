@@ -1,7 +1,7 @@
 syntax = "proto3";
 import public "google/protobuf/timestamp.proto";
 
-package onlineVideoDl;
+package OnlineVideoDl;
 
 // 查询有那些任务正在进行
 message TasksInProgressRequest {
