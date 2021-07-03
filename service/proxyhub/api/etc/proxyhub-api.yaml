@@ -1,0 +1,9 @@
+Name: ProxyHub-api
+Host: 0.0.0.0
+Port: 8888
+
+Get:
+  Etcd:
+    Hosts:
+      - localhost:2379
+    Key: proxyhub.rpc

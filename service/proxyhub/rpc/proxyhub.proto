@@ -9,11 +9,11 @@ message getOneReq {
 // -------------------------------------------------------
 // 获取若干个代理
 message getOneResp {
-  int64 ID = 1;       // 本系统内的唯一 ID
+  uint64 ID = 1;       // 本系统内的唯一 ID
   string IP = 2;      // 随机的 IP
 }
 // -------------------------------------------------------
-service proxyHuber {
+service getter {
   // 获取一个随机代理
   rpc get(getOneReq) returns (getOneResp);
 }

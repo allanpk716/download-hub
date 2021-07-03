@@ -1,0 +1,25 @@
+Name: proxyhub.rpc
+ListenOn: 127.0.0.1:8080
+
+CacheRedis:
+  - Host: 127.0.0.1:6379
+    Type: node
+
+ProxyConf:
+  - Name: proxy_pool
+    Url: http://192.168.50.135:5010/get_all
+    IsStable: false
+  - Name: scylla
+    Url: http://192.168.50.135:8899/api/v1/proxies?limit=500&anonymous=true
+    IsStable: false
+  - Name: Nas_V2ray
+    Url: http://192.168.50.252:20171
+    IsStable: true
+  - Name: Nas_2_Banwag
+    Url: http://192.168.50.252:5269
+    IsStable: true
+
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: proxyhub.rpc
