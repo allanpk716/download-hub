@@ -1,0 +1,18 @@
+syntax = "v1"
+
+type (
+	getOneReq {
+		UseUrl string `josn:"use-url,optional"` // 申请使用这个代理的是那个 Url，返回的代理优先级也跟这个 Url 正相关
+		Stable bool `json:"stable,optional"`	// 是否使用稳定的代理，比如自建的代理
+	}
+	getOneResp {
+		ID uint64 `json:"id"` // 本系统内的唯一 ID
+		IP string `json:"ip"` // 随机的 IP
+	}
+)
+
+service ProxyHub-api {
+	@handler Get
+	// 获取一个随机代理
+	get /get(getOneReq) returns(getOneResp)
+}
